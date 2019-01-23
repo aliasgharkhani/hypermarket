@@ -2,179 +2,162 @@ from django.db import models
 
 
 # Create your models here.
+
+
 class WareHouse(models.Model):
     WID = models.IntegerField(primary_key=True)
     capacity = models.IntegerField()
-    general_type = models.CharField()
-    address = models.CharField()
+    general_type = models.CharField(max_length=20)
+    address = models.CharField(max_length=100)
 
 
 class Material(models.Model):
-    MID = models.IntegerField(null=False),
-    buyDate = models.DateTimeField(null=False),
-    name = models.CharField(null=False),
-    inCategory = models.IntegerField(null=False),
-    producer = models.CharField(null=False),
-    InWereHouse = models.IntegerField(null=False),
-    color = models.IntegerField(),
-    buyPrice = models.FloatField(null=False),
-    sellPrice = models.FloatField(null=False),
-    wight = models.FloatField(),
-    type = models.CharField(null=False),
-
-    class Meta:
-        unique_together = (('MID', 'buyDate'),)
+    MID = models.IntegerField()
+    buyDate = models.DateTimeField()
+    name = models.CharField(max_length=100)
+    inCategory = models.IntegerField()
+    producer = models.CharField(max_length=100)
+    InWereHouse = models.IntegerField()
+    color = models.IntegerField()
+    buyPrice = models.FloatField()
+    sellPrice = models.FloatField()
+    wight = models.FloatField()
+    type = models.CharField(max_length=100)
+    WID = models.ForeignKey(WareHouse, on_delete=models.CASCADE)
+    wStartDay = models.DateTimeField()
+    wEndDay = models.DateTimeField()
 
 
 class Floor(models.Model):
-    FN = models.IntegerField(null=False, primary_key=True),
-    type = models.CharField(null=False),
-    operatorNumber = models.IntegerField(null=False),
+    FN = models.IntegerField(primary_key=True)
+    type = models.CharField(max_length=100)
+    operatorNumber = models.IntegerField()
 
 
-class equipment(models.Model):
-    EK = models.IntegerField(null=False, primary_key=True),
-    wellness = models.CharField(null=False),
-    buyDate = models.DateField(null=False),
-    available = models.CharField(null=False),
-    name = models.CharField(null=False),
+class Equipment(models.Model):
+    EK = models.IntegerField(primary_key=True)
+    wellness = models.CharField(max_length=100)
+    buyDate = models.DateField()
+    available = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
 
 
-class customer(models.Model):
-    CNumber = models.IntegerField(null=False, primary_key=True),
-    name = models.CharField(null=False),
-    familyName = models.CharField(null=False),
+class Customer(models.Model):
+    CNumber = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=100)
+    familyName = models.CharField(max_length=100)
     joinDate = models.DateField()
-    purchaseSum = models.PositiveIntegerField(null=False),
+    purchaseSum = models.PositiveIntegerField()
 
 
-class transaction(models.Model):
-    TN = models.IntegerField(null=False, primary_key=True),
-    time = models.TimeField(null=False),
-    date = models.DateField(null=False),
-    amount = models.DecimalField(null=False, max_digits=19, decimal_places=4),
-    CNumber = models.ForeignKey(customer, on_delete=models.CASCADE, null=False),
+class Transaction(models.Model):
+    TN = models.IntegerField(primary_key=True)
+    time = models.TimeField()
+    date = models.DateField()
+    amount = models.DecimalField(max_digits=19, decimal_places=4)
+    CNumber = models.ForeignKey(Customer, on_delete=models.CASCADE )
 
 
-class telephone(models.Model):
-    PNumber = models.IntegerField(null=False),
-    CNumber = models.ForeignKey(customer, on_delete=models.CASCADE, null=False),
-
-    class Meta:
-        unique_together = (('PNumber', 'CNumber'),)
+class Telephone(models.Model):
+    PNumber = models.IntegerField()
+    CNumber = models.ForeignKey(Customer, on_delete=models.CASCADE, )
 
 
-class spoiler(models.Model):
-    MID = models.ForeignKey(Material, null=False, on_delete=models.CASCADE),
-    buyDate = models.ForeignKey(Material, null=False, on_delete=models.CASCADE),
-    produceDate = models.DateTimeField(null=False),
-    expireDate = models.DateTimeField(null=False),
-
-    class Meta:
-        unique_together = (('MID', 'buyDate'),)
+class Spoiler(models.Model):
+    material = models.ForeignKey(Material, on_delete=models.CASCADE)
+    produceDate = models.DateTimeField()
+    expireDate = models.DateTimeField()
 
 
-class material_wereHouse(models.Model):
-    MID = models.ForeignKey(Material, null=False, on_delete=models.CASCADE),
-    buyDate = models.ForeignKey(Material, null=False, on_delete=models.CASCADE),
-    WID = models.ForeignKey(WareHouse, null=False, on_delete=models.CASCADE),
-    wStartDay = models.DateTimeField(null=False),
-    wEndDay = models.DateTimeField(null=False),
-
-    class Meta:
-        unique_together = (('MID', 'buyDate'),)
-
-
-class floor_equipment(models.Model):
-    FN = models.ForeignObject(Floor, null=False, on_delete=models.CASCADE),
-    EK = models.ForeignKey(equipment, null=False, on_delete=models.CASCADE),
-    From = models.DateField(null=False),
-    to = models.DateField(null=False),
-
-    class Meta:
-        unique_together = (('FN', 'EK'),)
+#
+# class material_wereHouse(models.Model):
+#     MID = models.ForeignKey(Material,  on_delete=models.CASCADE)
+#     buyDate = models.ForeignKey(Material,  on_delete=models.CASCADE)
+#     WID = models.ForeignKey(WareHouse,  on_delete=models.CASCADE)
+#     wStartDay = models.DateTimeField()
+#     wEndDay = models.DateTimeField()
+#
+#     class Meta:
+#         unique_together = ('MID', 'buyDate')
 
 
-class employee(models.Model):
-    ENumber = models.IntegerField(null=False, primary_key=True),
-    birthdate = models.DateField(null=False),
-    NC = models.PositiveIntegerField(null=False, unique=True),
-    accessLevel = models.PositiveIntegerField(null=False),
-    liability = models.CharField(null=False),
-    workingHours = models.PositiveIntegerField(null=False),
-    salary = models.PositiveIntegerField(null=False),
-    insuranceNumber = models.PositiveIntegerField(null=False),
-    joinDate = models.DateField(null=False),
-    joinType = models.CharField(null=False),
-    splitDate = models.DateField(null=False),
-    splitType = models.CharField(null=False),
-    post = models.CharField(null=False),
-    sex = models.CharField(null=False),
-    FN = models.ForeignKey(Floor, null=False, on_delete=models.CASCADE),
+class FloorEquipment(models.Model):
+    FN = models.ForeignKey(Floor, on_delete=models.CASCADE)
+    EK = models.ForeignKey(Equipment, on_delete=models.CASCADE)
+    From = models.DateField()
+    to = models.DateField()
 
 
-class category(models.Model):
-    CID = models.IntegerField(null=False, primary_key=True),
-    capacity = models.IntegerField(null=False),
-    color = models.CharField(null=False),
-    MID = models.ForeignKey(Material, null=False, on_delete=models.CASCADE),
-    buyDate = models.ForeignKey(Material, null=False, on_delete=models.CASCADE),
-    downloader = models.CharField(null=False),
-    lastDownloadDate = models.DateTimeField(null=False),
-    FN = models.ForeignKey(Floor, null=False, on_delete=models.CASCADE),
+class Employee(models.Model):
+    ENumber = models.IntegerField(primary_key=True)
+    birth_date = models.DateField()
+    NC = models.PositiveIntegerField(unique=True)
+    accessLevel = models.PositiveIntegerField()
+    liability = models.CharField(max_length=100)
+    workingHours = models.PositiveIntegerField()
+    salary = models.PositiveIntegerField()
+    insuranceNumber = models.PositiveIntegerField()
+    joinDate = models.DateField()
+    joinType = models.CharField(max_length=100)
+    splitDate = models.DateField()
+    splitType = models.CharField(max_length=100)
+    post = models.CharField(max_length=100)
+    sex = models.CharField(max_length=100)
+    FN = models.ForeignKey(Floor, on_delete=models.CASCADE)
 
 
-class uncash(models.Model):
-    TN = models.ForeignKey(transaction, null=False, primary_key=True, on_delete=models.CASCADE),
-    accountNumber = models.CharField(null=False),
+class EmployeeEquipment(models.Model):
+    ENumber = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    EK = models.ForeignKey(Equipment, on_delete=models.CASCADE)
+    take = models.DateField()
+    give = models.DateField()
 
 
-class traffic(models.Model):
-    date = models.DateField(null=False),
-    time = models.TimeField(null=False),
-    type = models.CharField(null=False),
-    ENumber = models.ForeignKey(employee, null=False, on_delete=models.CASCADE),
-
-    class Meta:
-        unique_together = (('date', 'time'),)
-
-
-class employee_wereHouse(models.Model):
-    ENumber = models.ForeignKey(employee, null=False, primary_key=True, on_delete=models.CASCADE),
-    WID = models.ForeignKey(WareHouse, null=False, on_delete=models.CASCADE),
-    From = models.DateTimeField(null=False),
-    to = models.DateTimeField(null=False),
+class Category(models.Model):
+    CID = models.IntegerField(primary_key=True)
+    capacity = models.IntegerField()
+    color = models.CharField(max_length=100)
+    material = models.ForeignKey(Material, on_delete=models.CASCADE)
+    downloader = models.CharField(max_length=100)
+    lastDownloadDate = models.DateTimeField()
+    FN = models.ForeignKey(Floor, on_delete=models.CASCADE)
 
 
-class employee_transaction(models.Model):
-    TN = models.ForeignKey(transaction, null=False, on_delete=models.CASCADE),
-    ENumber = models.ForeignKey(employee, null=False, on_delete=models.CASCADE),
-
-    class Meta:
-        unique_together = (('TN', 'ENumber'),)
+class Uncash(Transaction):
+    accountNumber = models.CharField(max_length=100)
 
 
-class employee_equipment(models.Model):
-    ENumber = models.ForeignKey(employee, null=False, on_delete=models.CASCADE),
-    EK = models.ForeignKey(equipment, null=False, on_delete=models.CASCADE),
-    take = models.DateField(null=False),
-    give = models.DateField(null=False),
-
-    class Meta:
-        unique_together = (('EK', 'ENumber'),)
+class Cash(Transaction):
+    pass
 
 
-class net(models.Model):
-    TN = models.ForeignKey(uncash, null=False, primary_key=True, on_delete=models.CASCADE),
-    trackingCode = models.CharField(null=False),
+class Traffic(models.Model):
+    date = models.DateField()
+    time = models.TimeField()
+    type = models.CharField(max_length=100)
+    ENumber = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
 
-class check(models.Model):
-    TN = models.ForeignKey(uncash, null=False, primary_key=True, on_delete=models.CASCADE),
-    receiptDate = models.DateField(null=False),
-    number = models.IntegerField(null=False),
+class EmployeeWereHouse(models.Model):
+    ENumber = models.OneToOneField(Employee,  on_delete=models.CASCADE)
+    WID = models.ForeignKey(WareHouse, on_delete=models.CASCADE)
+    From = models.DateTimeField()
+    to = models.DateTimeField()
 
 
-class card(models.Model):
-    TN = models.ForeignKey(uncash, null=False, primary_key=True, on_delete=models.CASCADE),
-    trackingCode = models.CharField(null=False),
+class EmployeeTransaction(models.Model):
+    TN = models.ForeignKey(Transaction, on_delete=models.CASCADE)
+    ENumber = models.ForeignKey(Employee, on_delete=models.CASCADE)
+
+
+class Net(Uncash):
+    trackingCode = models.CharField(max_length=100)
+
+
+class BankCheck(Uncash):
+    receiptDate = models.DateField()
+    number = models.IntegerField()
+
+
+class Card(Uncash):
+    trackingCode = models.CharField(max_length=100)

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'hyper_site',
 ]
 
 MIDDLEWARE = [
@@ -76,9 +77,9 @@ WSGI_APPLICATION = 'hypermarket.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DM_NAME', 'hypermarket'),
-        'USER': os.environ.get('DB_USER', 'alikhani'),
-        'PASSWORD': os.environ.get('DB_PASS', '1362281360'),
+        'NAME': 'hypermarket',
+        'USER': 'alikhani',
+        'PASSWORD': '1362281360',
         'HOST': 'localhost',
         'PORT': '5432',
     }
